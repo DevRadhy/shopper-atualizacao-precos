@@ -1,11 +1,20 @@
-import express from 'express';
+import "express-async-errors";
+import express, { NextFunction, Request, Response } from 'express';
+import { routes } from './routes';
+import { AppError } from "./errors/AppError";
 
 const app = express();
 
-// Middlewares
+app.use(routes);
 
-// Routes
+app.use((error: Error, request: Request, response: Response, next: NextFunction) => {
+  if(error instanceof AppError) {
+    return response.status(400).json({
+      error: error.message,
+    });
+  }
 
-// Error handler
+  return response.status(500).json({ message: "Internal Server Error" });
+})
 
 export { app };
